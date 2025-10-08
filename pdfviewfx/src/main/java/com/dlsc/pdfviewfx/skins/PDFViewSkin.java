@@ -154,7 +154,6 @@ public class PDFViewSkin extends SkinBase<PDFView> {
         });
 
         view.documentProperty().addListener(it -> updatePagesList());
-
         updatePagesList();
 
         ToolBar toolBar = createToolBar(view);
@@ -533,20 +532,18 @@ public class PDFViewSkin extends SkinBase<PDFView> {
         }
     }
 
-    private void updateMaximumValue(IntegerInputField pageField) {
+    private void updateMaximumValue(PageNumberTextField pageField) {
         Document document = getSkinnable().getDocument();
         if (document != null) {
-            pageField.setMaximumValue(document.getNumberOfPages());
+            pageField.setNumberOfPages(document.getNumberOfPages());
         }
     }
 
-    private void updateCurrentPageNumber(PDFView view, IntegerInputField pageField) {
+    private void updateCurrentPageNumber(PDFView view, PageNumberTextField pageField) {
         if (view.getDocument() != null) {
-            pageField.setMinimumValue(1);
             pageField.setValue(view.getPage() + 1);
         } else {
-            pageField.setMinimumValue(0);
-            pageField.setValue(0);
+            pageField.setValue(1);
         }
     }
 
@@ -692,7 +689,7 @@ public class PDFViewSkin extends SkinBase<PDFView> {
                 if (evt.getDeltaY() > 0) {
                     success = pdfView.getPage() > 0;
                     pagerService.setUp(true);
-                } else if (evt.getDeltaY() < 0){
+                } else if (evt.getDeltaY() < 0) {
                     success = pdfView.getPage() < pdfView.getDocument().getNumberOfPages() - 1;
                     pagerService.setUp(false);
                 }
@@ -1123,11 +1120,11 @@ public class PDFViewSkin extends SkinBase<PDFView> {
             this.page = page;
             this.scale = scale;
         }
-        
+
         @Override
         public boolean cancel(boolean mayInterruptIfRunning) {
             return super.cancel(false); // #21: Must not interrupt pdfbox otherwise the PDDocument will no longer be able to render pages
-        }        
+        }
 
         @Override
         protected Image call() {
@@ -1171,7 +1168,6 @@ public class PDFViewSkin extends SkinBase<PDFView> {
                 graphics.setColor(new java.awt.Color((int) (255 * searchResultColor.getRed()), (int) (255 * searchResultColor.getGreen()), (int) (255 * searchResultColor.getBlue())));
 
                 searchResults.forEach(result -> {
-                    System.out.println("Search marker: " + result.getMarker()  + " scaled " + result.getScaledMarker(scale));
                     Rectangle2D highlightMarker = result.getScaledMarker(scale);
                     graphics.fillRect(
                             (int) highlightMarker.getMinX(),
