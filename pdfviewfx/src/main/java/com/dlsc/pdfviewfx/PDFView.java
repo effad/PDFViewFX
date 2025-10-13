@@ -5,6 +5,7 @@ import com.dlsc.pdfviewfx.skins.PDFViewSkin;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
@@ -437,6 +438,46 @@ public class PDFView extends Control {
         this.searchResultColor.set(searchResultColor);
     }
 
+    private final ObjectProperty<Selection> selection = new SimpleObjectProperty<>(this, "selection");
+
+    /**
+     * Stores the currently selected search result.
+     *
+     * @return the selected search result
+     * @see #getSearchResults()
+     * @see #setSearchText(String)
+     */
+    public final ObjectProperty<Selection> selectionProperty() {
+        return selection;
+    }
+
+    public final Selection getSelection() {
+        return selection.get();
+    }
+
+    public final void setSelection(Selection selection) {
+        this.selection.set(selection);
+    }
+    
+    private final ObjectProperty<Color> selectionColor = new SimpleObjectProperty<>(this, "selectionColor", Color.BLUE);
+
+    /**
+     * Stores the color to be used for highlighting search results.
+     *
+     * @return the search result highlight color
+     */
+    public final ObjectProperty<Color> selectionColorProperty() {
+        return selectionColor;
+    }
+
+    public final Color getSelectionColor() {
+        return selectionColor.get();
+    }
+
+    public final void setSelectionColor(Color selectionColor) {
+        this.selectionColor.set(selectionColor);
+    }
+    
     /**
      * Loads the given PDF file.
      *
@@ -636,4 +677,13 @@ public class PDFView extends Control {
             return Objects.hash(searchText, textSnippet, pageNumber, marker);
         }
     }
+    
+    /**
+     * Documents that can have text selection need to implement this
+     * interface
+     */
+    public interface SelectableDocument extends Document {
+        Selection getSelection(int pageNumber, Point2D start, Point2D end);
+    }
+    
 }
