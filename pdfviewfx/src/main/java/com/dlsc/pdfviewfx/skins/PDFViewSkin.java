@@ -5,7 +5,6 @@ import com.dlsc.pdfviewfx.PDFView.Document;
 import com.dlsc.pdfviewfx.PDFView.SearchResult;
 import com.dlsc.pdfviewfx.PDFView.SearchableDocument;
 import com.dlsc.pdfviewfx.Selection;
-import com.dlsc.unitfx.IntegerInputField;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
@@ -37,7 +36,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -374,21 +376,14 @@ public class PDFViewSkin extends SkinBase<PDFView> {
         goRight.disableProperty().bind(Bindings.createBooleanBinding(() -> view.getDocument() == null || view.getDocument().getNumberOfPages() <= view.getPage() + 1, view.pageProperty(), view.documentProperty()));
         goRight.setMaxHeight(Double.MAX_VALUE);
 
-        IntegerInputField pageField = new IntegerInputField();
+        PageNumberTextField pageField = new PageNumberTextField();
         pageField.setTooltip(new Tooltip("Current page number"));
         pageField.getStyleClass().add("page-field");
-        pageField.setAllowNegatives(false);
         pageField.setMaxHeight(Double.MAX_VALUE);
         pageField.setAlignment(Pos.CENTER);
-        pageField.setMinimumValue(0);
         updateCurrentPageNumber(view, pageField);
         view.pageProperty().addListener(it -> updateCurrentPageNumber(view, pageField));
-        pageField.valueProperty().addListener(it -> {
-            Integer value = pageField.getValue();
-            if (value != null) {
-                view.setPage(value - 1);
-            }
-        });
+        pageField.valueProperty().addListener(it -> view.setPage(pageField.getValue() - 1));
         updateMaximumValue(pageField);
         view.documentProperty().addListener(it -> updateMaximumValue(pageField));
 
