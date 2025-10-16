@@ -42,7 +42,7 @@ public class PDFBoxDocument implements SearchableDocument, SelectableDocument {
     private File contentFile;
     private int numberOfPages;
     private BitSet landscapeCache;
-    private TextPositionExtractor textPositionExtractor = new TextPositionExtractor(-1);
+    private SelectionExtractor textPositionExtractor = new SelectionExtractor(-1);
 
     public PDFBoxDocument(InputStream pdfInputStream) {
         try {
@@ -203,7 +203,7 @@ public class PDFBoxDocument implements SearchableDocument, SelectableDocument {
     @Override
     public Selection getSelection(int pageNumber, Point2D start, Point2D end) {
         if (textPositionExtractor.getPageNumber() != pageNumber) {
-            textPositionExtractor = new TextPositionExtractor(pageNumber);
+            textPositionExtractor = new SelectionExtractor(pageNumber);
             try (PDDocument doc = createDocument()) { // TODO :: recreating document is expensive 
                 textPositionExtractor.writeText(doc, Writer.nullWriter());
             } catch (IOException e) { }

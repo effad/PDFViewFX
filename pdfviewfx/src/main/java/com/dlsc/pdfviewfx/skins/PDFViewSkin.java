@@ -717,7 +717,12 @@ public class PDFViewSkin extends SkinBase<PDFView> {
             selectionService.setOnSucceeded(evt -> {
                 getSkinnable().setSelection(selectionService.getValue());
             });
-            
+            selectionService.setOnFailed(evt -> {
+                if (selectionService.getException() instanceof Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
                     
             wrapper = new StackPane() {
                 @Override
