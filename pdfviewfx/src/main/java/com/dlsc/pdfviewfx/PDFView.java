@@ -358,6 +358,7 @@ public class PDFView extends Control {
     }
 
     public final void setDocument(Document document) {
+        setSelection(null);
         this.document.set(document);
     }
 

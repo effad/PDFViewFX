@@ -156,6 +156,7 @@ public class PDFViewSkin extends SkinBase<PDFView> {
         });
 
         view.documentProperty().addListener(it -> updatePagesList());
+
         updatePagesList();
 
         ToolBar toolBar = createToolBar(view);
