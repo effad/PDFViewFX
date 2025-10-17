@@ -38,8 +38,21 @@ class TextLine {
     boolean containsHeight(double y) {
         return top <= y && y <= bottom;
     }
-    
+
+    double getBottom() {
+        return bottom;
+    }
+
+    double getTop() {
+        return top;
+    }
+
     Optional<Rectangle2D> getRectangle(double startx, double endx) {
+        if (startx > endx) {
+            double tmp = endx;
+            endx = startx;
+            startx = tmp;
+        }
         TextPosition start = null;
         TextPosition end = null;
         for (TextPosition textPosition : textPositions) {

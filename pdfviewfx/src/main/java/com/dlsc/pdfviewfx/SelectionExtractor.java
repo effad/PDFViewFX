@@ -44,20 +44,27 @@ class SelectionExtractor  extends PDFTextStripper {
     }
     
     public List<Rectangle2D> getSelectionRectangles(Point2D start, Point2D end) {
+        if (start.getY() > end.getY()) {
+            Point2D tmp = end;
+            end = start;
+            start = tmp;
+        }
         List<Rectangle2D> selectionRectangles = new ArrayList<>();
         TextLine startLine = getFirstLineAt(start.getY());
         TextLine endLine = getLastLineAt(end.getY());
-        if (startLine == endLine) {
-            startLine.getRectangle(start.getX(), end.getX()).ifPresent(selectionRectangles::add);
-        } else {
-            startLine.getRectangle(start.getX(), Double.MAX_VALUE).ifPresent(selectionRectangles::add);
-            int startIdx = lines.indexOf(startLine) + 1;
-            int endIdx = lines.indexOf(endLine);
-            for (int idx = startIdx; idx < endIdx; idx++) {
-                TextLine line = lines.get(idx);
-                line.getRectangle(Double.MIN_VALUE, Double.MAX_VALUE).ifPresent(selectionRectangles::add);
+        if (startLine != null && endLine != null) {
+            if (startLine == endLine) {
+                startLine.getRectangle(start.getX(), end.getX()).ifPresent(selectionRectangles::add);
+            } else {
+                startLine.getRectangle(start.getX(), Double.MAX_VALUE).ifPresent(selectionRectangles::add);
+                int startIdx = lines.indexOf(startLine) + 1;
+                int endIdx = lines.indexOf(endLine);
+                for (int idx = startIdx; idx < endIdx; idx++) {
+                    TextLine line = lines.get(idx);
+                    line.getRectangle(Double.MIN_VALUE, Double.MAX_VALUE).ifPresent(selectionRectangles::add);
+                }
+                endLine.getRectangle(Double.MIN_VALUE, end.getX()).ifPresent(selectionRectangles::add);
             }
-            endLine.getRectangle(Double.MIN_VALUE, end.getX()).ifPresent(selectionRectangles::add);
         }
 
         return selectionRectangles;
@@ -65,16 +72,16 @@ class SelectionExtractor  extends PDFTextStripper {
 
     private TextLine getFirstLineAt(double y) {
         return lines.stream()
-            .filter(line -> line.containsHeight(y))
+            .filter(line -> line.getBottom() >= y)
             .findFirst()
-            .orElse(lines.getFirst());            
+            .orElse(null);
     }
     
     private TextLine getLastLineAt(double y) {
         return lines.reversed().stream()
-            .filter(line -> line.containsHeight(y))
+            .filter(line -> line.getTop() <= y)
             .findFirst()
-            .orElse(lines.getLast());            
+            .orElse(null);
     }
     
 }
