@@ -43,7 +43,7 @@ class SelectionExtractor  extends PDFTextStripper {
         return pageNumber;
     }
     
-    public List<Rectangle2D> getSelectionRectangles(Point2D start, Point2D end) {
+    public Selection getSelection(int pageNumber, Point2D start, Point2D end) {
         if (start.getY() > end.getY()) {
             Point2D tmp = end;
             end = start;
@@ -52,22 +52,23 @@ class SelectionExtractor  extends PDFTextStripper {
         List<Rectangle2D> selectionRectangles = new ArrayList<>();
         TextLine startLine = getFirstLineAt(start.getY());
         TextLine endLine = getLastLineAt(end.getY());
+        StringBuilder selectionText = new StringBuilder();
         if (startLine != null && endLine != null) {
             if (startLine == endLine) {
-                startLine.getRectangle(start.getX(), end.getX()).ifPresent(selectionRectangles::add);
+                startLine.collectSelection(start.getX(), end.getX(), selectionRectangles, selectionText);
             } else {
-                startLine.getRectangle(start.getX(), Double.MAX_VALUE).ifPresent(selectionRectangles::add);
+                startLine.collectSelection(start.getX(), Double.MAX_VALUE, selectionRectangles, selectionText);
                 int startIdx = lines.indexOf(startLine) + 1;
                 int endIdx = lines.indexOf(endLine);
                 for (int idx = startIdx; idx < endIdx; idx++) {
                     TextLine line = lines.get(idx);
-                    line.getRectangle(Double.MIN_VALUE, Double.MAX_VALUE).ifPresent(selectionRectangles::add);
+                    line.collectSelection(Double.MIN_VALUE, Double.MAX_VALUE, selectionRectangles, selectionText);
                 }
-                endLine.getRectangle(Double.MIN_VALUE, end.getX()).ifPresent(selectionRectangles::add);
+                endLine.collectSelection(Double.MIN_VALUE, end.getX(), selectionRectangles, selectionText);
             }
         }
 
-        return selectionRectangles;
+        return new Selection(pageNumber, selectionRectangles, selectionText.toString());
     }
 
     private TextLine getFirstLineAt(double y) {

@@ -208,6 +208,6 @@ public class PDFBoxDocument implements SearchableDocument, SelectableDocument {
                 textPositionExtractor.writeText(doc, Writer.nullWriter());
             } catch (IOException e) { }
         }
-        return new Selection(pageNumber, textPositionExtractor.getSelectionRectangles(start, end));
+        return textPositionExtractor.getSelection(pageNumber, start, end);
     }
 }

@@ -27,6 +27,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -36,10 +37,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.skin.VirtualFlow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -327,7 +325,7 @@ public class PDFViewSkin extends SkinBase<PDFView> {
             if (document instanceof PDFView.SelectableDocument selectableDocument && start != null && end != null) {
                 return selectableDocument.getSelection(pageNumber, start, end);
             } else {
-                return new Selection(-1,  List.of());
+                return new Selection(-1,  List.of(), "");
             }
         }
     }
@@ -789,19 +787,29 @@ public class PDFViewSkin extends SkinBase<PDFView> {
             pane.getChildren().addAll(group);
             
             group.addEventHandler(MouseEvent.MOUSE_PRESSED, evt -> {
-                selectionService.setStart(getMouseEventPoint(evt));
-                selectionService.restart();
+                if (evt.getButton() == MouseButton.PRIMARY) {
+                    group.setCursor(Cursor.TEXT);
+                    selectionService.setStart(getMouseEventPoint(evt));
+                    selectionService.restart();
+                    evt.consume();
+                }
             });
             
             group.addEventHandler(MouseEvent.MOUSE_RELEASED, evt -> {
-                selectionService.setEnd(getMouseEventPoint(evt));
-                selectionService.restart();
+                if (evt.getButton() == MouseButton.PRIMARY) {
+                    group.setCursor(Cursor.DEFAULT);
+                    selectionService.setEnd(getMouseEventPoint(evt));
+                    selectionService.restart();
+                    evt.consume();
+                }
             });
             
             group.addEventHandler(MouseEvent.MOUSE_DRAGGED, evt -> {
-                selectionService.setEnd(getMouseEventPoint(evt));
-                selectionService.restart();
-                evt.consume();
+                if (evt.getButton() == MouseButton.PRIMARY) {
+                    selectionService.setEnd(getMouseEventPoint(evt));
+                    selectionService.restart();
+                    evt.consume();
+                }
             });
 
             /*

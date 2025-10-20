@@ -47,7 +47,8 @@ class TextLine {
         return top;
     }
 
-    Optional<Rectangle2D> getRectangle(double startx, double endx) {
+    void collectSelection(double startx, double endx, List<Rectangle2D> selectionRectangles, StringBuilder selectionText) {
+        StringBuilder selectionBuffer = new StringBuilder();
         if (startx > endx) {
             double tmp = endx;
             endx = startx;
@@ -60,16 +61,20 @@ class TextLine {
             if (start == null && startx <= middle) {
                 start = textPosition;
             }
+            if (start != null && end == null) {
+                selectionBuffer.append(textPosition.getUnicode());
+            }
             if (middle <= endx) {
                 end = textPosition;
             }
         }
         Rectangle2D rectangle = null;
         if (start != null && end != null) {
-            rectangle = new Rectangle2D(start.getX(), top, end.getEndX() - start.getX(), bottom - top);
+            selectionRectangles.add(new Rectangle2D(start.getX(), top, end.getEndX() - start.getX(), bottom - top));
+            selectionText.append(selectionBuffer.toString());
         }
-        return Optional.ofNullable(rectangle);
     }
+
 
     private void addPosition(TextPosition textPosition) {
         PDFont font = textPosition.getFont();
