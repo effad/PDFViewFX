@@ -1,8 +1,7 @@
-package com.dlsc.pdfviewfx;
+package com.dlsc.pdfviewfx.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -61,11 +60,11 @@ class TextLine {
             if (start == null && startx <= middle) {
                 start = textPosition;
             }
-            if (start != null && end == null) {
-                selectionBuffer.append(textPosition.getUnicode());
-            }
             if (middle <= endx) {
                 end = textPosition;
+                if (start != null) {
+                    selectionBuffer.append(textPosition.getUnicode());
+                }
             }
         }
         Rectangle2D rectangle = null;

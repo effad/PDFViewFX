@@ -2,6 +2,7 @@
   <configuration default="false" name="PDFViewApp" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="com.dlsc.pdfviewfx.demo.PDFViewApp" />
     <module name="pdfviewfx-demo" />
+    <option name="VM_PARAMETERS" value="-Dglass.disableGrab=true" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="com.dlsc.pdfviewfx.demo.*" />

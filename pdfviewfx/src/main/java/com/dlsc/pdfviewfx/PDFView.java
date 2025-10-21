@@ -7,8 +7,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Skin;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.paint.Color;
 
 import java.awt.image.BufferedImage;
@@ -63,6 +68,12 @@ public class PDFView extends Control {
 
             setSearchText(null);
         });
+
+        MenuItem copyMenuItem = new MenuItem("Copy");
+        copyMenuItem.disableProperty().bind(selection.isNull());
+        copyMenuItem.setOnAction(e -> copy());
+        copyMenuItem.setAccelerator(KeyCombination.keyCombination("Shortcut+C"));
+        setContextMenu(new ContextMenu(copyMenuItem));
     }
 
     @Override
@@ -270,6 +281,17 @@ public class PDFView extends Control {
         int currentPage = getPage();
         setPage(getDocument().getNumberOfPages() - 1);
         return currentPage != getPage();
+    }
+
+    /**
+     * Copy selected text to clipboard.
+     */
+    public void copy() {
+        if (getSelection() != null) {
+            ClipboardContent content = new ClipboardContent();
+            content.putString(getSelection().getSelectedText());
+            Clipboard.getSystemClipboard().setContent(content);
+        }
     }
 
     /**

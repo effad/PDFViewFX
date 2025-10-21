@@ -1,8 +1,9 @@
-package com.dlsc.pdfviewfx;
+package com.dlsc.pdfviewfx.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dlsc.pdfviewfx.Selection;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 
@@ -10,10 +11,10 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
 /** SelectionExtractor allows to get selections for a given page of the pdf file. */
-class SelectionExtractor  extends PDFTextStripper {
+public class SelectionExtractor  extends PDFTextStripper {
 
-    private int pageNumber = -1;
-    private List<TextLine> lines = new ArrayList<TextLine>(64);
+    private final int pageNumber;
+    private final List<TextLine> lines = new ArrayList<>(64);
     private TextLine currentLine;
 
     public SelectionExtractor(int pageNumber) {
@@ -61,14 +62,16 @@ class SelectionExtractor  extends PDFTextStripper {
                 int startIdx = lines.indexOf(startLine) + 1;
                 int endIdx = lines.indexOf(endLine);
                 for (int idx = startIdx; idx < endIdx; idx++) {
+                    selectionText.append("\n");
                     TextLine line = lines.get(idx);
                     line.collectSelection(Double.MIN_VALUE, Double.MAX_VALUE, selectionRectangles, selectionText);
                 }
+                selectionText.append("\n");
                 endLine.collectSelection(Double.MIN_VALUE, end.getX(), selectionRectangles, selectionText);
             }
         }
 
-        return new Selection(pageNumber, selectionRectangles, selectionText.toString());
+        return selectionText.isEmpty() ? null : new Selection(pageNumber, selectionRectangles, selectionText.toString());
     }
 
     private TextLine getFirstLineAt(double y) {

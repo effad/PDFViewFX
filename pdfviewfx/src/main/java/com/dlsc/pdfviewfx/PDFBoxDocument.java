@@ -4,6 +4,7 @@ import com.dlsc.pdfviewfx.PDFView.Document;
 import com.dlsc.pdfviewfx.PDFView.SearchableDocument;
 import com.dlsc.pdfviewfx.PDFView.SelectableDocument;
 
+import com.dlsc.pdfviewfx.impl.SelectionExtractor;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import org.apache.commons.lang3.StringUtils;
@@ -199,9 +200,10 @@ public class PDFBoxDocument implements SearchableDocument, SelectableDocument {
 
         return snippetTextStartIndex - startIndexDecreaseDelta;
     }
-    
+
+    // This method is synchronized to avoid multiple selection service calls at the same time
     @Override
-    public Selection getSelection(int pageNumber, Point2D start, Point2D end) {
+    public synchronized Selection getSelection(int pageNumber, Point2D start, Point2D end) {
         if (textPositionExtractor.getPageNumber() != pageNumber) {
             textPositionExtractor = new SelectionExtractor(pageNumber);
             try (PDDocument doc = createDocument()) { // TODO :: recreating document is expensive 
