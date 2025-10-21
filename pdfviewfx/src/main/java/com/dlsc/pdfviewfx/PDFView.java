@@ -706,7 +706,7 @@ public class PDFView extends Control {
      * interface
      */
     public interface SelectableDocument extends Document {
-        Selection getSelection(int pageNumber, Point2D start, Point2D end);
+        Selection getSelection(int pageNumber, Point2D start, Point2D end, Selection.Mode mode);
     }
     
 }

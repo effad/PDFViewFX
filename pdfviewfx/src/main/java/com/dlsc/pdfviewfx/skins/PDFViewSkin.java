@@ -291,6 +291,7 @@ public class PDFViewSkin extends SkinBase<PDFView> {
     
     class SelectionService extends Service<Selection> {
         private Point2D start, end;
+        private Selection.Mode mode;
         
         public void setStart(Point2D start) {
             this.start = start;
@@ -300,10 +301,14 @@ public class PDFViewSkin extends SkinBase<PDFView> {
         public void setEnd(Point2D end) {
             this.end = end;
         }
-        
+
+        public void setMode(Selection.Mode mode) {
+            this.mode = mode;
+        }
+
         @Override
         protected Task<Selection> createTask() {
-            return new SelectionTask(getSkinnable().getDocument(), getSkinnable().getPage(), start, end);
+            return new SelectionTask(getSkinnable().getDocument(), getSkinnable().getPage(), start, end, mode);
         }
     }
     
@@ -312,18 +317,21 @@ public class PDFViewSkin extends SkinBase<PDFView> {
         private final Document document;
         private final int pageNumber;
         private final Point2D start, end;
+        private final Selection.Mode mode;
 
-        public SelectionTask(Document document, int pageNumber, Point2D start, Point2D end) {
+
+        public SelectionTask(Document document, int pageNumber, Point2D start, Point2D end, Selection.Mode mode) {
             this.document = document;
             this.pageNumber = pageNumber;
             this.start = start;
             this.end = end;
+            this.mode = mode;
         }
 
         @Override
         protected Selection call() throws Exception {
             if (document instanceof PDFView.SelectableDocument selectableDocument && start != null && end != null) {
-                return selectableDocument.getSelection(pageNumber, start, end);
+                return selectableDocument.getSelection(pageNumber, start, end, mode);
             } else {
                 return new Selection(-1,  List.of(), "");
             }
@@ -790,6 +798,8 @@ public class PDFViewSkin extends SkinBase<PDFView> {
                 if (evt.getButton() == MouseButton.PRIMARY) {
                     group.setCursor(Cursor.TEXT);
                     selectionService.setStart(getMouseEventPoint(evt));
+                    selectionService.setEnd(getMouseEventPoint(evt));
+                    selectionService.setMode(Selection.Mode.forClickCount(evt.getClickCount()));
                     selectionService.restart();
                     evt.consume();
                 }

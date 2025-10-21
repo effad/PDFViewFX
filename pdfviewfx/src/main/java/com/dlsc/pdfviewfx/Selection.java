@@ -10,6 +10,18 @@ public class Selection {
     private final List<Rectangle2D> marker;
     private final String selectedText;
 
+    public enum Mode {
+        CHARACTER, WORD, LINE;
+
+        public static Mode forClickCount(int clickCount) {
+            return switch (clickCount) {
+                case 1 -> CHARACTER;
+                case 2 -> WORD;
+                case 3 -> LINE;
+                default -> CHARACTER;
+            };
+        }
+    }
     /**
      * Constructs a new selection.
      *
