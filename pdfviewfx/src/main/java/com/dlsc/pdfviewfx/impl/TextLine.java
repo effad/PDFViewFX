@@ -78,7 +78,7 @@ class TextLine {
                 startIndex = idx;
             }
 
-            if (lastWasBlank && !textPosition.getUnicode().isBlank()) {
+            if (lastWasBlank) {
                 lastWordStartIdx = idx;
             }
             lastWasBlank = textPosition.getUnicode().isBlank();
@@ -106,7 +106,7 @@ class TextLine {
                 endIndex = idx;
             }
 
-            if (lastWasBlank && !textPosition.getUnicode().isBlank()) {
+            if (lastWasBlank) {
                 lastWordEndIdx = idx;
             }
             lastWasBlank = textPosition.getUnicode().isBlank();

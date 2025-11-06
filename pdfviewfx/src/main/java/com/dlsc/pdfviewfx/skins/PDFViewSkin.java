@@ -748,9 +748,9 @@ public class PDFViewSkin extends SkinBase<PDFView> {
                             bouncer.setWidth(marker.getWidth() * scale);
                             bouncer.setHeight(marker.getHeight() * scale);
                         }
+                        Platform.runLater(() -> ensureVisible(bouncer));
                     }
 
-                    Platform.runLater(() -> ensureVisible(bouncer));
                 }
 
                 private void ensureVisible(Node node) {
